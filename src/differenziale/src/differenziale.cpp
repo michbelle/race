@@ -73,7 +73,7 @@ int main(int argc, char **argv)
 	{
             if(gam>0)
             {
-                R=L/tan(w);
+                R=L/tan(gam);
                 w=v/R;
                 vlf=w*sqrt(pow((R-a/2),2)+pow(L,2));
                 vrf=w*sqrt(pow((R+a/2),2)+pow(L,2));
@@ -96,8 +96,8 @@ int main(int argc, char **argv)
             }
             else
             {
-                w=-w; //faccio inversa
-                R=L/tan(w);
+                gam=-gam; //faccio inversa
+                R=L/tan(gam);
                 w=v/R;
                 vrf=w*sqrt(pow((R-a/2),2)+pow(L,2));
                 vlf=w*sqrt(pow((R+a/2),2)+pow(L,2));
