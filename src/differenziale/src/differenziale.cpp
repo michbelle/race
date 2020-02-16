@@ -39,18 +39,16 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "differenziale");
     ros::NodeHandle n;
     ros::Publisher velocity_pub = n.advertise<std_msgs::Float32MultiArray>("velo", 1000);
-    ros::Subscriber sub = n.subscribe("joy", 10, joy_input);
+    //ros::Subscriber sub = n.subscribe("joy", 10, joy_input);
     ros::Rate loop_rate(500);
 
     while (ros::ok())
     {
 
         ros::Subscriber subjoy = n.subscribe("joy", 1000, &joy_input);
-        /*w=subjoy.axes[0];
-        v=subjoy->axes[5];
-        v=-(v-1)/4;*/
-
+        
         std_msgs::Float32MultiArray vel;
+
 	vel.data.resize(4);
         vel.layout.dim.resize(4);
 
@@ -124,11 +122,10 @@ int main(int argc, char **argv)
 	}
 
         //se velocità oltre 1 impossibile per il sistema
-        if (va>1 || vb>1 || vlf>1 || vrf>1)
-        {
-
-        }
-
+        if(va>1){va=1;}
+        if(vb>1){vb=1;}
+        if(vlf>1){vlf=1;}
+        if(vrf>1){vrf=1;}
 
 
         /*
