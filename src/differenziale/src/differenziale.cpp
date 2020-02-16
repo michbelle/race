@@ -8,6 +8,7 @@ codice per la realizzazione del differenziale per un auto
 #include "sensor_msgs/Joy.h"
 #include <sstream>
 #include <math.h>
+#include <stdlib.h>
 
 //dati della macchina
 float a=100;//distanza centri ruote anteriori
@@ -19,7 +20,7 @@ float r=0.5;//raggio ruota
 /*test input*/
 float w;
 float v;
-float gam;
+float gam,gam1;
 float R, vlf,vrf,vlr,vrr, al, be, va, vb;
 
 
@@ -68,6 +69,8 @@ int main(int argc, char **argv)
             vlr=v;
             vlf=v;
             vrf=v;
+            va=v;
+            vb=v;
 	}
 	else
 	{
@@ -89,15 +92,15 @@ int main(int argc, char **argv)
                 */
 
                 al=atan(L/(R-a/2));//angolo di sterzata ruota sinistra
-                be=atan(L/(R+a/2));//angolo di sterzata ruota sinistra
+                be=atan(L/(R+a/2));//angolo di sterzata ruota destra
 
                 va=vlf*cos(al);
                 vb=vrf*cos(be);
             }
             else
             {
-                gam=-gam; //faccio inversa
-                R=L/tan(gam);
+                gam1=abs(gam); //faccio inversa
+                R=L/tan(gam1);
                 w=v/R;
                 vrf=w*sqrt(pow((R-a/2),2)+pow(L,2));
                 vlf=w*sqrt(pow((R+a/2),2)+pow(L,2));
@@ -111,7 +114,7 @@ int main(int argc, char **argv)
                 test per me
                 */
 
-                be=atan(L/(R-a/2));//angolo di sterzata ruota sinistra
+                be=atan(L/(R-a/2));//angolo di sterzata ruota destra
                 al=atan(L/(R+a/2));//angolo di sterzata ruota sinistra
 
                 va=vlf*cos(al);
@@ -145,8 +148,8 @@ int main(int argc, char **argv)
         vel.layout.dim[3].label  = "vrr";
 	//vel.layout.dim[3].size   = 1;
 	//vel.layout.dim[3].stride = 1;
-        vel.data[0]=w;//vlf;//va
-        vel.data[1]=vrf;//;vb
+        vel.data[0]=va;//vlf//va
+        vel.data[1]=vb;//vrf//vb
         vel.data[2]=vlr;
         vel.data[3]=vrr;
 
