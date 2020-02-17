@@ -26,7 +26,8 @@
 #include <sstream>
 #include <math.h>
 
-float invel[]
+//float invel=[0,0,0,0];
+std::vector<float> invel(4,0);
 int flag=0;
 
 //
@@ -35,7 +36,8 @@ void velo_input(const std_msgs::Float32MultiArray::ConstPtr& velo)
     invel=velo->data;
 }
 
-int running; static int running = 0;
+//int running;
+static int running = 0;
 
 // possible modes, user selected with command line arguments
 typedef enum m_mode_t{
