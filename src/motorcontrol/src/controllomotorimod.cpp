@@ -49,10 +49,48 @@ typedef enum m_mode_t{
 } m_mode_t;
 
 // interrupt handler to catch ctrl-c
-void signal_handler(__attribute__ ((unused)) int dummy)
+void __signal_handler(__attribute__ ((unused)) int dummy)
 {
 	running=0;
 	return;
+}
+
+
+
+static void __on_pause_press(void)
+{
+	printf("Pause Pressed\n");
+	flag=0;
+	return;
+}
+
+static void __on_pause_release(void)
+{
+	printf("Pause Released\n");
+	return;
+}
+
+static void __on_mode_press(void)
+{
+	flag=1;
+	printf("Mode Pressed\n");
+	return;
+}
+
+static void __on_mode_release(void)
+{
+	printf("Mode Released\n");
+	return;
+}
+
+void control_motor()
+{
+	// ros::Subscriber subvelo = n.subscribe("velo", 1000, &velo_input);
+	//rc_motor_set(1,invel[0]);
+	//rc_motor_set(2,invel[1]);
+	//rc_motor_set(3,invel[2]);
+	//rc_motor_set(4,invel[3]);
+	//m_mode = NORMAL;
 }
 
 int main(int argc, char **argv)
@@ -89,8 +127,27 @@ int main(int argc, char **argv)
     {      
         //std_msgs::Float32MultiArray vel;
 
-		if (falg==0){m_mode = BRAKE;rc_motor_brake_all(); rc_motor_cleanup();}
-		else if (flag==1){m_mode =MNORMAL; control_motor();}
+		if (flag==0)
+		{
+			m_mode = BRAKE;
+			rc_motor_brake(1);
+			rc_motor_brake(2);
+			rc_motor_brake(3);
+			rc_motor_brake(4);
+			rc_motor_cleanup();
+		}
+		else if (flag==1)
+		{
+			m_mode =NORMAL;
+			control_motor();
+
+			ros::Subscriber subvelo = n.subscribe("velo", 1000, &velo_input);
+			rc_motor_set(1,invel[0]);
+			rc_motor_set(2,invel[1]);
+			rc_motor_set(3,invel[2]);
+			rc_motor_set(4,invel[3]);
+			m_mode = NORMAL;
+		}
 		/*
 		ros::Subscriber subvelo = n.subscribe("velo", 1000, &velo_input);
 		vel.data.resize(4);
@@ -104,7 +161,11 @@ int main(int argc, char **argv)
 		//m_mode = FREE;m_mode = BRAKE;m_mode = SWEEP;//modalità
 		//rc_motor_free_spin_all(duty);//free spin
 		//rc_motor_free_spin(ch);
-		//rc_motor_brake_all(); rc_motor_brake(ch); fermare i motori al canale
+		//rc_motor_brake(1);
+		//rc_motor_brake(2);
+		//rc_motor_brake(3);
+		//rc_motor_brake(4);
+		// rc_motor_brake(ch); fermare i motori al canale
 		//rc_motor_set_all(duty);rc_motor_set(ch,duty); //mettere il motore a quella dutycycle
 
 		//rc_usleep(500000);
@@ -129,45 +190,11 @@ int main(int argc, char **argv)
 	}
 
 	// cleanup and exit
-	rc_motor_brake_all();
+	rc_motor_brake(1);
+	rc_motor_brake(2);
+	rc_motor_brake(3);
+	rc_motor_brake(4);
 	rc_motor_cleanup();
 	rc_button_cleanup();
 	return 0;
-}
-
-
-static void __on_pause_press(void)
-{
-	printf("Pause Pressed\n");
-	flag=0;
-	return;
-}
-
-static void __on_pause_release(void)
-{
-	printf("Pause Released\n");
-	return;
-}
-
-static void __on_mode_press(void)
-{
-	flag=1;
-	printf("Mode Pressed\n");
-	return;
-}
-
-static void __on_mode_release(void)
-{
-	printf("Mode Released\n");
-	return;
-}
-
-void control_motor()
-{
-	ros::Subscriber subvelo = n.subscribe("velo", 1000, &velo_input);
-	rc_motor_set(1,invel[0]);
-	rc_motor_set(2,invel[1]);
-	rc_motor_set(3,invel[2]);
-	rc_motor_set(4,invel[3]);
-	m_mode = NORMAL;
 }

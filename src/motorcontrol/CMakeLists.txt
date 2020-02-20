@@ -120,12 +120,15 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 ##include_directories(${customLibary_INCLUDE_DIRS}) <--------------------------------------------------------
-include_directories(/home/michele/race/src/motorcontrol/library/include)
+include_directories(library/include)
+include_directories(library/src)
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
 #   src/${PROJECT_NAME}/motorcontrol.cpp
 # )
+
+#add_library(/home/michele/racecar/src/motorcontrol/library/src/button.c)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -208,6 +211,6 @@ include_directories(/home/michele/race/src/motorcontrol/library/include)
 # catkin_add_nosetests(test)
 
 
-add_executable(controlmot src/controllomotorimod.cpp)
+add_executable(controlmot src/controllomotorimod.cpp library/src/motor.c library/src/button.c library/src/model.c library/src/time.c library/src/pthread.c library/src/io/gpio.c library/src/io/pwm.c) 
 target_link_libraries(controlmot ${catkin_LIBRARIES})
 #add_dependencies(controlmot beginner_tutorials_generate_messages_cpp)
