@@ -131,11 +131,14 @@ int main(int argc, char **argv)
 		if (flag==0)
 		{
 			m_mode = BRAKE;
+			rc_motor_brake(0);
+			/*
 			rc_motor_brake(1);
 			rc_motor_brake(2);
 			rc_motor_brake(3);
 			rc_motor_brake(4);
 			rc_motor_cleanup();
+			*/
 		}
 		else if (flag==1)
 		{
@@ -191,10 +194,13 @@ int main(int argc, char **argv)
 	}
 
 	// cleanup and exit
+	rc_motor_brake(0);
+	/*
 	rc_motor_brake(1);
 	rc_motor_brake(2);
 	rc_motor_brake(3);
 	rc_motor_brake(4);
+	*/
 	rc_motor_cleanup();
 	rc_button_cleanup();
 	return 0;
