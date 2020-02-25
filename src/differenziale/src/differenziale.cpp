@@ -11,47 +11,48 @@ codice per la realizzazione del differenziale per un auto
 #include <stdlib.h>
 
 //dati della macchina
-float a=100;//distanza centri ruote anteriori
-float b=100;//distanza centri ruote posteriori
-float L=100;//distanza tra ruote anteriori e posteriori
-float r=0.5;//raggio ruota
+float a=0.13;//distanza centri ruote anteriori
+float b=0.13;//distanza centri ruote posteriori
+float L=0.15;//distanza tra ruote anteriori e posteriori
+float r=0.025;//raggio ruota
 #define PI 3.14159265
 
 /*test input*/
 float w;
 float v;
-float gam,gam1;
+float gam2,gam1;
 float R, vlf,vrf,vlr,vrr, al, be, va, vb;
 
+sensor_msgs::Joy::ConstPtr cosas;
 
 /*
  * sistema ricezione comandi
  */
-void joy_input(const sensor_msgs::Joy::ConstPtr& joy)
+void joy_input(const sensor_msgs::Joy::ConstPtr& joysub)
 {
-        v=joy->axes[5];
+        cosas=joysub;
+        v=joysub->axes[5];
         v=-(v-1)/4;
-        gam=joy->axes[0];
+        gam2=joysub->axes[0];
+        fprintf(stderr,"veloc %f\n",v);
 }
 
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "differenziale");
     ros::NodeHandle n;
-    ros::Publisher velocity_pub = n.advertise<std_msgs::Float32MultiArray>("velo", 1000);
-    //ros::Subscriber sub = n.subscribe("joy", 10, joy_input);
-    ros::Rate loop_rate(500);
+
+    ros::Subscriber subjoy = n.subscribe("joy", 50, &joy_input);
+    std_msgs::Float32MultiArray vel;
+    vel.data.resize(4);
+    vel.layout.dim.resize(4);
+
+    ros::Publisher velocity_pub = n.advertise<std_msgs::Float32MultiArray>("velo", 100);
+        
+    ros::Rate loop_rate(50);
 
     while (ros::ok())
     {
-
-        ros::Subscriber subjoy = n.subscribe("joy", 1000, &joy_input);
-        
-        std_msgs::Float32MultiArray vel;
-
-	vel.data.resize(4);
-        vel.layout.dim.resize(4);
-
         /*formule*/
 
         /*
@@ -59,7 +60,7 @@ int main(int argc, char **argv)
         v=v_imu*R/(sqrt(R^2+y_imu^2))
         */
 
-	if (gam < 0.01 && gam >-0.01)
+	if (gam2 < 0.01 && gam2 >-0.01)
 	{
             //se gamma troppo basso allora infinito --> errore
             //faccio un if ed elimino casi sotto tot valore in base a sensibilità
@@ -72,9 +73,9 @@ int main(int argc, char **argv)
 	}
 	else
 	{
-            if(gam>0)
+            if(gam2>0)
             {
-                R=L/tan(gam);
+                R=L/tan(gam2);
                 w=v/R;
                 vlf=w*sqrt(pow((R-a/2),2)+pow(L,2));
                 vrf=w*sqrt(pow((R+a/2),2)+pow(L,2));
@@ -97,7 +98,7 @@ int main(int argc, char **argv)
             }
             else
             {
-                gam1=abs(gam); //faccio inversa
+                gam1=abs(gam2); //faccio inversa
                 R=L/tan(gam1);
                 w=v/R;
                 vrf=w*sqrt(pow((R-a/2),2)+pow(L,2));
@@ -145,14 +146,18 @@ int main(int argc, char **argv)
         vel.layout.dim[3].label  = "vrr";
 	//vel.layout.dim[3].size   = 1;
 	//vel.layout.dim[3].stride = 1;
-        vel.data[0]=va;//vlf//va
-        vel.data[1]=vb;//vrf//vb
-        vel.data[2]=vlr;
-        vel.data[3]=vrr;
+        vel.data[2]=va;//vlf//va
+        vel.data[3]=vb;//vrf//vb
+        vel.data[1]=vlr;
+        vel.data[4]=vrr;
 
-        velocity_pub.publish(vel);
+        if(cosas)
+        {
+                velocity_pub.publish(vel);
+                }
+        
         ros::spinOnce();
-        //loop_rate.sleep();
+        loop_rate.sleep();
 
         }
         
