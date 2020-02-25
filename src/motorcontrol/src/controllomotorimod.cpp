@@ -102,6 +102,7 @@ int main(int argc, char **argv)
     ros::Rate loop_rate(500);
 
 	m_mode_t m_mode = DISABLED;
+	rc_motor_init();
 
 	// initialize pause and mode buttons
 	if(rc_button_init(RC_BTN_PIN_PAUSE, RC_BTN_POLARITY_NORM_HIGH,
