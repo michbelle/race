@@ -1,0 +1,6 @@
+<launch>
+  	<node name="joy" pkg="joy" type="joy_node" />
+  	<node name="differenziale" pkg="differenziale" type="differenziale" />
+  	<node name="motorcontrol" pkg="motorcontrol" type="controlmot" />
+	differenziale
+</launch>
