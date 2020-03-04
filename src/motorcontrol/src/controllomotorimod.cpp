@@ -59,14 +59,15 @@ void __signal_handler(__attribute__ ((unused)) int dummy)
 
 static void __on_pause_press(void)
 {
-	printf("Pause Pressed\n");
 	flag=0;
+	fprintf(stderr,"Pause Pressed :flag:: %d \n",flag);
 	return;
 }
 
 static void __on_pause_release(void)
 {
 	printf("Pause Released\n");
+	fprintf(stderr,"Pause Released :flag:: %d \n",flag);
 	return;
 }
 
@@ -74,12 +75,14 @@ static void __on_mode_press(void)
 {
 	flag=1;
 	printf("Mode Pressed\n");
+	fprintf(stderr,"Mode Pressed :flag:: %d \n",flag);
 	return;
 }
 
 static void __on_mode_release(void)
 {
 	printf("Mode Released\n");
+	fprintf(stderr,"Mode Released :flag:: %d \n",flag);
 	return;
 }
 
@@ -100,6 +103,8 @@ int main(int argc, char **argv)
     //ros::Publisher velocity_pub = n.advertise<std_msgs::Float32MultiArray>("velo", 1000);
     //ros::Subscriber sub = n.subscribe("velo", 10, joy_input);
     ros::Rate loop_rate(500);
+
+	ros::Subscriber subvelo = n.subscribe("velo", 1000, &velo_input);
 
 	m_mode_t m_mode = DISABLED;
 	rc_motor_init();
@@ -130,6 +135,7 @@ int main(int argc, char **argv)
 
 		if (flag==0)
 		{
+			fprintf(stderr,"invel =0? %f %f %f %f\n", invel[0], invel[1], invel[2], invel[3]);
 			m_mode = BRAKE;
 			rc_motor_brake(0);
 			/*
@@ -142,10 +148,11 @@ int main(int argc, char **argv)
 		}
 		else if (flag==1)
 		{
-			m_mode =NORMAL;
-			control_motor();
 
-			ros::Subscriber subvelo = n.subscribe("velo", 1000, &velo_input);
+			fprintf(stderr,"invel =0? %f %f %f %f\n", invel[0], invel[1], invel[2], invel[3]);
+
+			m_mode =NORMAL;
+			//control_motor();
 			rc_motor_set(1,invel[0]);
 			rc_motor_set(2,invel[1]);
 			rc_motor_set(3,invel[2]);
