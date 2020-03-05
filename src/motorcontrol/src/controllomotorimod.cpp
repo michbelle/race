@@ -149,7 +149,7 @@ int main(int argc, char **argv)
 		else if (flag==1)
 		{
 
-			fprintf(stderr,"invel =0? %f %f %f %f\n", invel[0], invel[1], invel[2], invel[3]);
+			fprintf(stderr," %f %f %f %f\n", invel[0], invel[1], invel[2], invel[3]);
 
 			m_mode =NORMAL;
 			//control_motor();
