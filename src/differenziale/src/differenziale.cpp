@@ -146,10 +146,10 @@ int main(int argc, char **argv)
         vel.layout.dim[3].label  = "vrr";
 	//vel.layout.dim[3].size   = 1;
 	//vel.layout.dim[3].stride = 1;
-        vel.data[2]=va;//vlf//va
-        vel.data[3]=vb;//vrf//vb
-        vel.data[1]=vlr;
-        vel.data[4]=vrr;
+        vel.data[1]=va;//vlf//va
+        vel.data[2]=vb;//vrf//vb
+        vel.data[0]=vlr;
+        vel.data[3]=vrr;
 
         if(cosas)
         {
